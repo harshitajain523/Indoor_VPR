@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auditing Indoor Visual Place Recognition</title>
+  <meta name="description" content="Reproductions, ground-truth protocols, and evaluation artifacts in indoor visual place recognition.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/custom.css">
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <h1 class="title is-2 publication-title">Auditing Indoor Visual Place Recognition</h1>
+      <h2 class="subtitle is-5">Reproductions, ground-truth protocols, and evaluation artifacts</h2>
+
+      <div class="is-size-5 publication-authors">
+        <span class="author-block"><a href="#">Harshita Jain</a><sup>1</sup>,</span>
+        <span class="author-block"><a href="#">Author Two</a><sup>1</sup>,</span>
+        <span class="author-block"><a href="#">Advisor Name</a><sup>1</sup></span>
+      </div>
+      <div class="is-size-6 publication-authors">
+        <span class="author-block"><sup>1</sup>Institution / Lab &nbsp;·&nbsp; work in progress, 2026</span>
+      </div>
+
+      <div class="publication-links">
+        <a class="button is-dark is-rounded" href="REPLACE_WITH_CODE_REPO_URL">
+          <span class="icon"><i class="fab fa-github"></i></span><span>Code</span></a>
+        <a class="button is-dark is-rounded" href="REPLACE_WITH_REPORT_PDF_URL">
+          <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Report</span></a>
+        <a class="button is-dark is-rounded" href="REPLACE_WITH_DATA_URL">
+          <span class="icon"><i class="fas fa-database"></i></span><span>Data / results</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TEASER ===================== -->
+<section class="section teaser-section">
+  <div class="container is-max-desktop">
+    <figure class="fig">
+      <img src="static/images/fig_fragility.png" alt="Recall and shuffled-retriever floor vs. ground-truth radius on two Baidu database sizes.">
+      <figcaption>Every recall is read beside a <strong>shuffled-retriever floor</strong>. Both rise with the
+        ground-truth radius; on a small database the floor rises far faster (17% vs. 5% at 25&nbsp;m).</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ===================== ABSTRACT ===================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Overview</h2>
+    <div class="content is-size-5 has-text-justified">
+      <p>Indoor visual place recognition (VPR) is evaluated by retrieving database images taken near a query,
+        where “near” is defined by a horizontal-distance ground truth. We reproduce a recent state-of-the-art
+        global descriptor, <strong>MegaLoc</strong>, on the standard Baidu-Mall benchmark, and use the same
+        evaluation path to measure its behaviour across several indoor datasets (17places, maze, Baidu).
+        Alongside every recall we report a <strong>shuffled-retriever floor</strong>, and we characterise how
+        both recall and this floor vary with the ground-truth radius and the size of the retrieval database.
+        We additionally quantify the prevalence of privacy-anonymisation artifacts in one indoor benchmark.
+        The study is a measurement effort — its aim is to make indoor VPR numbers <em>interpretable</em>,
+        not to rank methods.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== REPRODUCTION ===================== -->
+<section class="section has-background-light-soft">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Reproduction — MegaLoc on Baidu-Mall</h2>
+    <div class="content is-size-5">
+      <p>Using the released model at its stated 322×322 inference resolution and the benchmark’s stated
+        <strong>25&nbsp;m</strong> ground-truth radius, MegaLoc’s published Baidu result is reproduced to within
+        0.1&nbsp;point on the VPR-benchmark version of the dataset (5,207 database / 3,208 query images) —
+        with no parameter tuning.</p>
+      <table class="table is-striped is-fullwidth num-table">
+        <thead><tr><th>Baidu-Mall (5,207 / 3,208)</th><th>Recall@1</th><th>Recall@10</th></tr></thead>
+        <tbody>
+          <tr><td>Paper (Table&nbsp;1)</td><td>87.7</td><td>98.0</td></tr>
+          <tr><td><strong>Ours — stated 25&nbsp;m, no tuning</strong></td><td><strong>87.75</strong></td><td><strong>97.97</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== INDOOR RESULTS ===================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">MegaLoc across indoor datasets</h2>
+    <div class="content is-size-5">
+      <p>The same pipeline, run on three indoor datasets at <em>each dataset’s own</em> ground-truth protocol.
+        Recall@1 is reported beside its shuffled-retriever floor (10 seeds).</p>
+      <table class="table is-striped is-fullwidth num-table">
+        <thead><tr><th>Dataset</th><th>DB size</th><th>GT protocol</th><th>MegaLoc R@1</th><th>Shuffled floor R@1</th></tr></thead>
+        <tbody>
+          <tr><td>Baidu (VPR-benchmark)</td><td>5,207</td><td>25&nbsp;m</td><td>87.75</td><td>5.4</td></tr>
+          <tr><td>17places</td><td>406</td><td>index window (±15)</td><td>94.58</td><td>6.7</td></tr>
+          <tr><td>maze-with-text</td><td>8,540</td><td>10&nbsp;m (per floor)</td><td>73.56</td><td>3.4</td></tr>
+        </tbody>
+      </table>
+      <p class="note">The floor makes recall comparable across datasets whose ground-truth protocols and
+        database sizes differ. Recall@10 is a weak discriminator on the smaller sets (a shuffled retriever
+        already exceeds 50% there), so we lead with Recall@1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GT PROTOCOL ===================== -->
+<section class="section has-background-light-soft">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">How the metric behaves</h2>
+    <div class="content is-size-5">
+      <p>Both recall and the shuffled-retriever floor increase with the ground-truth radius. On a small
+        database the floor rises much faster: at 25&nbsp;m a random retriever already scores <strong>17%</strong>
+        Recall@1 on the 689-image Baidu subset, versus <strong>5%</strong> on the 5,207-image version. Reading
+        recall beside this floor — and taking the radius from the benchmark’s stated protocol rather than tuning
+        it — keeps the numbers interpretable.</p>
+      <figure class="fig">
+        <img src="static/images/fig_fragility.png" alt="Recall and floor vs. radius, two database sizes.">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ARTIFACTS ===================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Anonymisation artifacts in maze</h2>
+    <div class="content is-size-5">
+      <p>The maze-with-text benchmark anonymises people as baked-in white silhouettes. A connected-component
+        detector over all 9,845 images finds the artifact in <strong>~23%</strong> of both reference and query
+        images (23.3% / 22.8% at the bimodal-valley threshold). The artifact sits on both sides of retrieval,
+        so it is a property of the corpus rather than of any one method.</p>
+      <figure class="fig">
+        <img src="static/images/fig_mask_examples.png" alt="Clean vs. masked maze examples.">
+        <figcaption>Top: clean hallway views. Bottom: the same benchmark with people replaced by pure-white
+          silhouettes. Label = largest connected white component as a fraction of the frame.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ONGOING ===================== -->
+<section class="section has-background-light-soft">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">In progress</h2>
+    <div class="content is-size-5">
+      <ul>
+        <li><strong>Multi-storey ground truth (InLoc).</strong> Characterising how often a horizontal-distance
+          ground truth credits a retrieval on a <em>different floor</em> — the first indoor setting where this
+          is measurable, since common benchmarks are single-storey.</li>
+        <li><strong>Dataset survey.</strong> Multi-floor indoor datasets with public query poses (NAVER LABS
+          localisation datasets) as candidate testbeds for the above.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== METHOD NOTE ===================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Reproducibility practices</h2>
+    <div class="content is-size-5">
+      <ul>
+        <li>Every recall is reported beside a <strong>shuffled-retriever floor</strong> (10 seeds, mean).</li>
+        <li>Ground-truth parameters are taken from each benchmark’s <strong>stated protocol</strong> — never
+          tuned to match a target number.</li>
+        <li>Descriptor order is verified against filename order on every extraction.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BIBTEX ===================== -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">BibTeX</h2>
+    <pre class="bibtex">@misc{jain2026indoorvpr,
+  title  = {Auditing Indoor Visual Place Recognition: Reproductions, Ground-Truth Protocols, and Evaluation Artifacts},
+  author = {Jain, Harshita and Author, Two and Advisor, Name},
+  year   = {2026},
+  note   = {Work in progress},
+  url    = {REPLACE_WITH_PAGE_URL}
+}</pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container has-text-centered content is-size-7">
+    <p>Built from the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template">Academic Project Page Template</a>.
+       All numbers are measured from the linked code; figures regenerate via <code>make_figures.py</code>.</p>
+  </div>
+</footer>
+
+</body>
+</html>
