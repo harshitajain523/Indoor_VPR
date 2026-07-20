@@ -60,4 +60,28 @@ for row,(items,col) in enumerate([(clean,(40,150,70)),(masked,(200,60,60))]):
         cv.paste(im,(x+7,y0+22)); d.rectangle([x+5,y0+20,x+tw-2,y0+th-2],outline=col,width=3)
         d.text((x+9,y0+4),f"lcf={r['lcf']:.3f}",fill=col)
 cv.save(f"{OUT}/fig_mask_examples.png"); print("saved fig_mask_examples.png")
+
+# ---------- Fig 3: MegaLoc vs SegVLAD under identical GT ----------
+groups=["17places","maze"]; mega=[94.58,73.56]; seg=[95.30,61.50]; floor=[6.7,3.4]
+x=np.arange(len(groups)); w=0.34
+fig,ax=plt.subplots(figsize=(7.2,4.4))
+b1=ax.bar(x-w/2-0.01,mega,w,color="#2f6fb3",label="MegaLoc (global descriptor)",zorder=3)
+b2=ax.bar(x+w/2+0.01,seg,w,color="#e08a1e",label="SegVLAD (segment retrieval)",zorder=3)
+for bars,vals in [(b1,mega),(b2,seg)]:
+    for rect,v in zip(bars,vals):
+        ax.text(rect.get_x()+rect.get_width()/2,v+1.6,f"{v:.1f}",ha="center",va="bottom",
+                fontsize=11,fontweight="bold",color=INK)
+for xi,fl in zip(x,floor):
+    ax.plot([xi-0.48,xi+0.48],[fl,fl],color=CHANCE,lw=1.6,linestyle=(0,(4,3)),zorder=2)
+ax.text(x[-1]+0.5,floor[-1],"  chance",va="center",color="#70757f",fontsize=10)
+ax.set_xticks(x); ax.set_xticklabels(groups); ax.set_ylim(0,106); ax.set_xlim(-0.65,1.95)
+ax.set_ylabel("Recall@1  (%)")
+ax.grid(axis="y",color=GRID,lw=1); ax.set_axisbelow(True)
+for s in ("top","right"): ax.spines[s].set_visible(False)
+ax.legend(frameon=False,loc="lower left",fontsize=10.5)
+ax.set_title("MegaLoc vs. SegVLAD under identical ground truth (Recall@1, with chance floor)",
+             loc="left",fontsize=12.5,fontweight="bold",color=INK,pad=8)
+fig.tight_layout()
+fig.savefig(f"{OUT}/fig_methods.png",bbox_inches="tight",facecolor="white")
+print("saved fig_methods.png")
 print("done")

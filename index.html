@@ -21,11 +21,9 @@
 
       <div class="is-size-5 publication-authors">
         <span class="author-block"><a href="#">Harshita Jain</a><sup>1</sup>,</span>
-        <span class="author-block"><a href="#">Author Two</a><sup>1</sup>,</span>
-        <span class="author-block"><a href="#">Advisor Name</a><sup>1</sup></span>
       </div>
       <div class="is-size-6 publication-authors">
-        <span class="author-block"><sup>1</sup>Institution / Lab &nbsp;·&nbsp; work in progress, 2026</span>
+        <span class="author-block"><sup>1</sup>Robotics Research Centre, IIIT-Hyderabad &nbsp;·&nbsp; work in progress, 2026</span>
       </div>
 
       <div class="publication-links">
@@ -59,7 +57,8 @@
       <p>Indoor visual place recognition (VPR) is evaluated by retrieving database images taken near a query,
         where “near” is defined by a horizontal-distance ground truth. We reproduce a recent state-of-the-art
         global descriptor, <strong>MegaLoc</strong>, on the standard Baidu-Mall benchmark, and use the same
-        evaluation path to measure its behaviour across several indoor datasets (17places, maze, Baidu).
+        evaluation path to measure its behaviour across several indoor datasets (17places, maze, Baidu), comparing it against the segment-retrieval
+        method <strong>SegVLAD</strong> under identical ground truth.
         Alongside every recall we report a <strong>shuffled-retriever floor</strong>, and we characterise how
         both recall and this floor vary with the ground-truth radius and the size of the retrieval database.
         We additionally quantify the prevalence of privacy-anonymisation artifacts in one indoor benchmark.
@@ -92,21 +91,26 @@
 <!-- ===================== INDOOR RESULTS ===================== -->
 <section class="section">
   <div class="container is-max-desktop">
-    <h2 class="title is-3">MegaLoc across indoor datasets</h2>
+    <h2 class="title is-3">MegaLoc and SegVLAD across indoor datasets</h2>
     <div class="content is-size-5">
       <p>The same pipeline, run on three indoor datasets at <em>each dataset’s own</em> ground-truth protocol.
-        Recall@1 is reported beside its shuffled-retriever floor (10 seeds).</p>
+        MegaLoc (a global descriptor) and SegVLAD (segment retrieval) are scored under <strong>identical
+        ground truth</strong>, and each Recall@1 is read beside a shuffled-retriever floor (10 seeds).</p>
       <table class="table is-striped is-fullwidth num-table">
-        <thead><tr><th>Dataset</th><th>DB size</th><th>GT protocol</th><th>MegaLoc R@1</th><th>Shuffled floor R@1</th></tr></thead>
+        <thead><tr><th>Dataset</th><th>DB size</th><th>GT protocol</th><th>MegaLoc R@1</th><th>SegVLAD R@1</th><th>Shuffled floor R@1</th></tr></thead>
         <tbody>
-          <tr><td>Baidu (VPR-benchmark)</td><td>5,207</td><td>25&nbsp;m</td><td>87.75</td><td>5.4</td></tr>
-          <tr><td>17places</td><td>406</td><td>index window (±15)</td><td>94.58</td><td>6.7</td></tr>
-          <tr><td>maze-with-text</td><td>8,540</td><td>10&nbsp;m (per floor)</td><td>73.56</td><td>3.4</td></tr>
+          <tr><td>Baidu (VPR-benchmark)</td><td>5,207</td><td>25&nbsp;m</td><td>87.75</td><td>—</td><td>5.4</td></tr>
+          <tr><td>17places</td><td>406</td><td>index window (±15)</td><td>94.58</td><td>95.30</td><td>6.7</td></tr>
+          <tr><td>maze-with-text</td><td>8,540</td><td>10&nbsp;m (per floor)</td><td>73.56</td><td>61.50</td><td>3.4</td></tr>
         </tbody>
       </table>
-      <p class="note">The floor makes recall comparable across datasets whose ground-truth protocols and
-        database sizes differ. Recall@10 is a weak discriminator on the smaller sets (a shuffled retriever
-        already exceeds 50% there), so we lead with Recall@1.</p>
+      <p class="note">The shuffled floor is method-independent — it depends only on the ground truth and the
+        database — so one column serves both methods, and it keeps recall comparable across datasets whose
+        protocols and sizes differ. SegVLAD (exp0, pretrained, domain vocabulary) was not run on the
+        VPR-benchmark Baidu build (—). Recall@10 is a weak discriminator on the smaller sets, so we lead with Recall@1.</p>
+      <figure class="fig">
+        <img src="static/images/fig_methods.png" alt="MegaLoc vs SegVLAD Recall@1 on 17places and maze, with the chance floor.">
+      </figure>
     </div>
   </div>
 </section>
