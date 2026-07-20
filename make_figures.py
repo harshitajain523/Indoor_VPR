@@ -84,4 +84,20 @@ ax.set_title("MegaLoc vs. SegVLAD under identical ground truth (Recall@1, with c
 fig.tight_layout()
 fig.savefig(f"{OUT}/fig_methods.png",bbox_inches="tight",facecolor="white")
 print("saved fig_methods.png")
+
+# ---------- Fig 4: SegVLAD Recall@N, 17places vs maze ----------
+N=[1,2,3,4,5]; p17=[95.3,97.0,97.3,97.8,98.3]; pmz=[61.5,70.6,75.6,79.1,81.2]
+fig,ax=plt.subplots(figsize=(7.4,4.4))
+ax.plot(N,p17,color="#2f6fb3",lw=2.4,marker="o",ms=6,solid_capstyle="round",zorder=3)
+ax.plot(N,pmz,color="#e08a1e",lw=2.4,marker="o",ms=6,solid_capstyle="round",zorder=3)
+ax.text(N[-1]+0.08,p17[-1],f" 17places  (R@1 to R@5 gap {p17[-1]-p17[0]:.0f})",va="center",color="#2f6fb3",fontsize=10.5,fontweight="bold")
+ax.text(N[-1]+0.08,pmz[-1],f" maze  (gap {pmz[-1]-pmz[0]:.0f})",va="center",color="#e08a1e",fontsize=10.5,fontweight="bold")
+ax.set_xticks(N); ax.set_xlim(0.9,7.4); ax.set_ylim(55,101)
+ax.set_xlabel("N  (top-N retrieved)"); ax.set_ylabel("Recall@N  (%)")
+ax.grid(axis="y",color=GRID,lw=1); ax.set_axisbelow(True)
+for s in ("top","right"): ax.spines[s].set_visible(False)
+ax.set_title("SegVLAD Recall@N: on maze the correct place is usually in the top 5 but loses at rank 1",
+             loc="left",fontsize=11.5,fontweight="bold",color=INK,pad=8)
+fig.tight_layout(); fig.savefig(f"{OUT}/fig_recall_at_n.png",bbox_inches="tight",facecolor="white")
+print("saved fig_recall_at_n.png")
 print("done")
