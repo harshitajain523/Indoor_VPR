@@ -43,11 +43,11 @@
   <div class="container is-max-desktop">
     <figure class="fig">
       <img src="static/images/fig_fragility.png" alt="Recall and shuffled-retriever floor versus ground-truth radius on two Baidu database sizes.">
-      <figcaption>A recurring theme of this work: every recall number is read next to a
-        <strong>shuffled-retriever floor</strong>, the score a random ranker would obtain under the same
-        ground truth. Both rise with the ground-truth radius, and on a small database the floor rises much
-        faster (17&percnt; versus 5&percnt; at 25&nbsp;m). A recall value is only interpretable relative to
-        this floor.</figcaption>
+      <figcaption>Throughout the project I read every recall number next to a
+        <strong>shuffled-retriever floor</strong>: the score a random ranker would get under the same
+        ground truth. Both climb with the ground-truth radius, and on a small database the floor climbs much
+        faster (17&percnt; against 5&percnt; at 25&nbsp;m). A recall number tells you almost nothing on its own.
+        It only means something next to this floor.</figcaption>
     </figure>
   </div>
 </section>
@@ -57,22 +57,22 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">Overview</h2>
     <div class="content is-size-5 has-text-justified">
-      <p>Visual place recognition (VPR) asks a simple question: given a photograph, which images in a
-        reference database were taken at the same place? This project studies VPR <em>indoors</em>, where the
-        problem is harder and the evaluation is less standardised than outdoors. It has two parts.</p>
+      <p>Visual place recognition (VPR) is the problem of matching a photograph to the images in a reference
+        database that were taken at the same place. I study the indoor case, which is harder than the outdoor one
+        and far less settled in how people evaluate it. The project comes in two halves.</p>
       <ol>
-        <li><strong>A dataset landscape survey.</strong> A structured review of about twenty-five VPR datasets
+        <li><strong>A dataset landscape survey.</strong> A structured read through about twenty-five VPR datasets
           released between 2007 and 2025, with a taxonomy, a sensor-modality matrix, an evaluation-protocol
-          table, and a catalogue of gaps that are specific to indoor VPR.</li>
-        <li><strong>An empirical audit.</strong> A controlled benchmarking of two retrieval methods,
+          table, and a catalogue of the gaps that are specific to indoor VPR.</li>
+        <li><strong>An empirical audit.</strong> Controlled benchmarking of two retrieval methods,
           <strong>SegVLAD</strong> (segment-based) and <strong>MegaLoc</strong> (a single global descriptor),
-          across four indoor datasets. The emphasis is not on ranking the methods but on making the numbers
-          <em>interpretable</em>: how sensitive a recall value is to the choice of ground-truth threshold, how
-          it compares to random chance, and how dataset artifacts such as privacy anonymisation affect it.</li>
+          across four indoor datasets. I care less about which method wins than about whether its numbers can be
+          trusted: how far a recall value moves when you change the ground-truth threshold, how far it sits above
+          random chance, and how dataset artifacts such as privacy anonymisation distort it.</li>
       </ol>
-      <p>The two parts reinforce each other. The survey identifies that indoor VPR has no unified evaluation
-        protocol and that anonymisation is rarely documented. The audit then measures exactly those effects on
-        real datasets.</p>
+      <p>The two halves feed each other. The survey is where I noticed that indoor VPR has no shared evaluation
+        protocol and that anonymisation almost never gets documented; the audit is where I went and measured both
+        on real datasets.</p>
     </div>
   </div>
 </section>
@@ -82,17 +82,16 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">Background: how VPR is measured, and why indoors is different</h2>
     <div class="content is-size-5">
-      <p><strong>The retrieval task.</strong> Each image is converted into a descriptor (a vector). For a query,
-        the database images are ranked by descriptor similarity. The query counts as correct at
-        <strong>Recall@N</strong> if at least one of the top N ranked images is a true same-place image, called
-        a <em>positive</em>. Which database images count as positives is fixed by a <em>ground truth</em>: often
-        a distance threshold in the world (for example, within <em>r</em> metres of the query), sometimes a
-        window of neighbouring frame indices.</p>
-      <p><strong>Why the ground truth matters so much.</strong> Recall depends entirely on how positives are
-        defined. Widen the radius and more database images qualify, so recall rises, but so does the score a
-        random ranker would achieve. This is why we report a shuffled-retriever floor next to every recall.</p>
-      <p><strong>Indoor VPR is structurally different from outdoor VPR.</strong> The survey summarises five
-        differences:</p>
+      <p><strong>The retrieval task.</strong> Each image becomes a descriptor, a single vector. For a query, the
+        database images are ranked by descriptor similarity. The query is correct at <strong>Recall@N</strong> if
+        at least one of the top N ranked images is a true same-place image, called a <em>positive</em>. Which
+        database images count as positives is set by a <em>ground truth</em>: usually a distance threshold in the
+        world (say, within <em>r</em> metres of the query), sometimes a window of neighbouring frame indices.</p>
+      <p><strong>Why the ground truth matters so much.</strong> Recall is entirely at the mercy of how you define
+        a positive. Widen the radius and more database images qualify, so recall goes up, but so does the score a
+        random ranker would get. That is why every recall in this project is reported next to a shuffled-retriever
+        floor.</p>
+      <p><strong>Indoor VPR is a different problem from outdoor VPR</strong>, in five concrete ways:</p>
       <ul>
         <li>No GPS, so ground truth is a 6-DoF camera pose or a room label rather than a satellite coordinate.</li>
         <li>Datasets are one to two orders of magnitude smaller than outdoor benchmarks.</li>
@@ -111,13 +110,13 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">Part 1: A VPR dataset landscape survey</h2>
     <div class="content is-size-5">
-      <p>The survey covers roughly twenty-five datasets from 2007 to 2025 and organises them into a master
-        taxonomy: outdoor (large-scale and long-term, multi-modal and range-based, urban retrieval, compact
-        baselines), indoor (static and relocalization, repeat-visit and change-aware, text-assisted and
-        repetitive-structure), pedestrian-centric, and adjacent localization benchmarks. It also provides a
-        sensor-modality matrix that tracks RGB, depth, thermal, LiDAR, radar, GPS or IMU, and, as an emerging
-        modality, scene text.</p>
-      <p>The most important output is a catalogue of six gaps that this benchmarking work then acts on:</p>
+      <p>The survey covers roughly twenty-five datasets from 2007 to 2025 and sorts them into a taxonomy: outdoor
+        (large-scale and long-term, multi-modal and range-based, urban retrieval, compact baselines), indoor
+        (static and relocalization, repeat-visit and change-aware, text-assisted and repetitive-structure),
+        pedestrian-centric, and adjacent localization benchmarks. A sensor-modality matrix tracks RGB, depth,
+        thermal, LiDAR, radar, GPS or IMU, and, as a newer modality, scene text.</p>
+      <p>The part that mattered most for the rest of the project is a list of six gaps, which the benchmarking
+        then goes after:</p>
       <ol>
         <li><strong>No unified indoor benchmark protocol.</strong> Outdoor VPR has converged on Recall@N against
           shared splits, whereas indoor work uses pose error, robustness splits, and room-label accuracy
@@ -132,7 +131,7 @@
         <li><strong>Privacy and anonymisation.</strong> Anonymisation is rarely documented. NYC-Indoor-VPR masks
           pedestrians with white pixels; most other datasets do not state their protocol at all.</li>
       </ol>
-      <p>The five indoor datasets used in Part 2 sit inside this taxonomy as follows.</p>
+      <p>The five indoor datasets I use in Part 2 sit inside this taxonomy as follows.</p>
       <table class="table is-striped is-fullwidth num-table wide">
         <thead><tr><th>Dataset</th><th>Year</th><th>Scale</th><th>Indoor challenge</th><th>Ground truth</th></tr></thead>
         <tbody>
@@ -155,20 +154,20 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">Part 2: Methods and setup</h2>
     <div class="content is-size-5">
-      <p>Two retrieval methods are compared.</p>
+      <p>I compare two retrieval methods.</p>
       <ul>
         <li><strong>SegVLAD</strong> (Garg et al., ECCV 2024) retrieves image <em>segments</em> rather than
-          whole-image descriptors. Segment Anything (SAM) decomposes each image into segments, DINOv2 features
-          each segment, segments are aggregated into VLAD descriptors with neighbour aggregation, and a
-          similarity-weighted bin count over retrieved segments produces the final image ranking. The runs here
-          use the default configuration <code>exp0_global_SegLoc_VLAD_PCA_o3</code> (neighbour-aggregation order
-          3 with PCA) and the pretrained backbone (PreT).</li>
-        <li><strong>MegaLoc</strong> (Berton and Masone, 2025) produces a single global descriptor per image
-          (a DINOv2 ViT-B backbone with SALAD aggregation, 8448 dimensions, about 228 million parameters), at a
+          whole-image descriptors. Segment Anything (SAM) breaks each image into segments, DINOv2 features them,
+          the segments are aggregated into VLAD descriptors with neighbour aggregation, and a similarity-weighted
+          bin count over the retrieved segments produces the final image ranking. I use the default configuration
+          <code>exp0_global_SegLoc_VLAD_PCA_o3</code> (neighbour-aggregation order 3 with PCA) and the pretrained
+          backbone (PreT).</li>
+        <li><strong>MegaLoc</strong> (Berton and Masone, 2025) produces a single global descriptor per image: a
+          DINOv2 ViT-B backbone with SALAD aggregation, 8448 dimensions, about 228 million parameters, at a
           stated inference resolution of 322 by 322.</li>
       </ul>
-      <p><strong>Hardware.</strong> Full SAM and DINO extraction ran on the Phoenix server (an RTX A4000). A
-        local RTX 4050 with 6&nbsp;GB was used for MegaLoc inference and for validation, since MegaLoc needs no
+      <p><strong>Hardware.</strong> Full SAM and DINO extraction ran on the Phoenix server (an RTX A4000). I used
+        a local RTX 4050 with 6&nbsp;GB for MegaLoc inference and for validation, since MegaLoc skips the
         segmentation step and fits comfortably in 6&nbsp;GB.</p>
       <p><strong>The four datasets.</strong></p>
       <table class="table is-striped is-fullwidth num-table wide">
@@ -190,9 +189,9 @@
     <h2 class="title is-3">SegVLAD results</h2>
     <div class="content is-size-5">
       <h3 class="title is-5">17-Places: reproduces the paper</h3>
-      <p>Using author-precomputed features for stages 1 to 3 and a local stage 4 with the map vocabulary, the
-        SegVLAD run reproduces the published 17-Places numbers, which validates the pipeline before moving to
-        new datasets.</p>
+      <p>With author-precomputed features for stages 1 to 3 and a local stage 4 using the map vocabulary, the run
+        reproduces the published 17-Places numbers. That was the point of running it: check the pipeline against a
+        known result before trusting it on anything new.</p>
       <table class="table is-striped is-fullwidth num-table">
         <thead><tr><th>17-Places (406 queries)</th><th>R@1</th><th>R@2</th><th>R@3</th><th>R@4</th><th>R@5</th></tr></thead>
         <tbody>
@@ -203,16 +202,16 @@
 
       <h3 class="title is-5">Maze-with-Text: a new end-to-end result</h3>
       <p>This is a full pipeline run from raw images on Phoenix, with the domain vocabulary and the TextInPlace
-        protocol (positives are same-floor and within 10&nbsp;m). The result is new: Maze-with-Text is not in
-        the SegVLAD paper.</p>
+        protocol (positives are same-floor and within 10&nbsp;m). The number is new, since Maze-with-Text does
+        not appear in the SegVLAD paper.</p>
       <table class="table is-striped is-fullwidth num-table">
         <thead><tr><th>Maze-with-Text (1,305 queries)</th><th>R@1</th><th>R@2</th><th>R@3</th><th>R@4</th><th>R@5</th></tr></thead>
         <tbody>
           <tr><td>SegVLAD-PreT (this work)</td><td><strong>61.5</strong></td><td>70.6</td><td>75.6</td><td>79.1</td><td><strong>81.2</strong></td></tr>
         </tbody>
       </table>
-      <p>Placed against the published baselines from the TextInPlace paper (all floors), SegVLAD at Recall@1
-        sits inside the appearance-only band rather than above it:</p>
+      <p>Set against the published baselines from the TextInPlace paper (all floors), SegVLAD at Recall@1 lands
+        inside the appearance-only band rather than above it:</p>
       <table class="table is-striped is-fullwidth num-table">
         <thead><tr><th>Method</th><th>R@1</th><th>R@5</th></tr></thead>
         <tbody>
@@ -221,28 +220,26 @@
           <tr><td>TextInPlace (adds scene-text re-ranking)</td><td>85.4</td><td>93.9</td></tr>
         </tbody>
       </table>
-      <p>Three observations follow.</p>
+      <p>A few things stand out.</p>
       <ul>
-        <li>The segment advantage that SegVLAD shows on 17-Places does not carry over to repetitive corridors.
-          At Recall@1 it is essentially tied with the appearance-only method SALAD (about 61.6).</li>
-        <li>The gap between Recall@1 and Recall@5 is about 20 points on maze, against about 3 points on
-          17-Places. The correct place is usually present in the top five but loses at rank 1. The figure below
-          makes this visible.</li>
-        <li>Only the pretrained backbone was run. A finetuned backbone would likely improve the numbers, and
-          scene-text re-ranking (the TextInPlace contribution) adds about 14 points on its own.</li>
+        <li>The segment advantage SegVLAD shows on 17-Places does not survive repetitive corridors. At Recall@1
+          it is basically tied with the appearance-only method SALAD (about 61.6).</li>
+        <li>The gap between Recall@1 and Recall@5 is about 20 points on maze, against about 3 on 17-Places. The
+          right place is usually somewhere in the top five; it just loses at rank 1. The figure below shows this.</li>
+        <li>I only ran the pretrained backbone. A finetuned one would probably lift the numbers, and scene-text
+          re-ranking (the TextInPlace contribution) is worth about 14 points by itself.</li>
       </ul>
       <figure class="fig">
         <img src="static/images/fig_recall_at_n.png" alt="SegVLAD Recall@N for 17-Places and maze, showing a flat 17-Places curve and a steep maze curve.">
-        <figcaption>On maze the curve climbs steeply from Recall@1 to Recall@5 (a gap of about 20 points),
-          the signature of the correct place sitting in the shortlist but losing at rank 1. On 17-Places the
-          curve is nearly flat.</figcaption>
+        <figcaption>On maze the curve climbs steeply from Recall@1 to Recall@5 (about 20 points), the signature
+          of the correct place sitting in the shortlist but losing at rank 1. On 17-Places it is almost flat.</figcaption>
       </figure>
-      <p><strong>The failure mode is cross-floor confusion.</strong> The typical rank-1 miss is a same-looking
-        corridor or pillar on the wrong floor, for example the fifth floor confused with the second. A note on
+      <p><strong>The failure mode is cross-floor confusion.</strong> A typical rank-1 miss is a same-looking
+        corridor or pillar on the wrong floor, the fifth confused with the second. One thing to keep in mind when
         reading the montages in the report: the maze ground truth is position-only and orientation-agnostic, so
-        an image counted as a valid positive can face a different direction from the query and therefore look
-        quite different. That is a property of the 10&nbsp;m radius protocol, not a labelling error. The full
-        montages of rank-1 hits and misses are in the
+        an image that counts as a valid positive can face a different direction from the query and look quite
+        different because of it. That is the 10&nbsp;m radius protocol doing its thing, not a labelling error. The
+        full montages of rank-1 hits and misses are in the
         <a href="static/pdfs/rough_results.pdf">Benchmark Report (PDF)</a>.</p>
     </div>
   </div>
@@ -253,11 +250,11 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">MegaLoc reproduction on Baidu-Mall</h2>
     <div class="content is-size-5">
-      <p>MegaLoc reports a strong Baidu result. Using the released model at its stated 322 by 322 inference
-        resolution, and the benchmark's stated 25&nbsp;m ground-truth radius, the published number reproduces to
+      <p>MegaLoc reports a strong Baidu result. With the released model at its stated 322 by 322 inference
+        resolution and the benchmark's stated 25&nbsp;m ground-truth radius, the published number reproduces to
         within 0.1 point on the VPR-benchmark build of the dataset (5,207 database and 3,208 query images), with
         no parameter tuning. This build is a larger, differently packaged version of Baidu than the 689-image
-        subset that appears in the survey.</p>
+        subset in the survey.</p>
       <table class="table is-striped is-fullwidth num-table">
         <thead><tr><th>Baidu-Mall (5,207 / 3,208)</th><th>Recall@1</th><th>Recall@10</th></tr></thead>
         <tbody>
@@ -265,10 +262,9 @@
           <tr><td>This work, stated 25&nbsp;m, no tuning</td><td><strong>87.75</strong></td><td><strong>97.97</strong></td></tr>
         </tbody>
       </table>
-      <p class="note">An earlier attempt matched 87.7 on the 689-image subset only by searching the ground-truth
-        radius until the number appeared. That is fitting a parameter to a target, which is not a reproduction.
-        The correct result came from running the benchmark's stated protocol on the build the paper actually
-        used.</p>
+      <p class="note">An earlier attempt hit 87.7 on the 689-image subset, but only by sweeping the ground-truth
+        radius until the number showed up. That is fitting a parameter to a target, not a reproduction. The real
+        result came from running the benchmark's stated protocol on the build the paper actually used.</p>
     </div>
   </div>
 </section>
@@ -278,8 +274,8 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">MegaLoc and SegVLAD across indoor datasets</h2>
     <div class="content is-size-5">
-      <p>The two methods are scored under identical ground truth on each dataset, so the comparison reflects the
-        methods rather than the protocol. Each Recall@1 is read next to a shuffled-retriever floor (mean over 10
+      <p>Both methods are scored under identical ground truth on each dataset, so the comparison is about the
+        methods and not the protocol. Each Recall@1 is read next to a shuffled-retriever floor (mean over 10
         seeds).</p>
       <table class="table is-striped is-fullwidth num-table wide">
         <thead><tr><th>Dataset</th><th>DB size</th><th>GT protocol</th><th>MegaLoc R@1</th><th>SegVLAD R@1</th><th>Shuffled floor R@1</th></tr></thead>
@@ -289,18 +285,18 @@
           <tr><td>Maze-with-Text</td><td>8,540</td><td>10&nbsp;m (per floor)</td><td>73.56</td><td>61.50</td><td>3.4</td></tr>
         </tbody>
       </table>
-      <p class="note">The shuffled floor depends only on the ground truth and the database, not on the method,
-        so one column serves both. SegVLAD was not run on the VPR-benchmark Baidu build. Recall@10 is a weak
-        discriminator on the smaller sets, where a random ranker already exceeds 50&percnt;, so Recall@1 is the
+      <p class="note">The shuffled floor depends only on the ground truth and the database, not on the method, so
+        one column serves both. I did not run SegVLAD on the VPR-benchmark Baidu build. Recall@10 barely
+        discriminates on the smaller sets, where a random ranker already clears 50&percnt;, so Recall@1 is the
         headline metric.</p>
       <figure class="fig">
         <img src="static/images/fig_methods.png" alt="MegaLoc versus SegVLAD Recall@1 on 17-Places and maze, with the chance floor.">
-        <figcaption>On 17-Places the two methods are close. On maze MegaLoc, a global descriptor, is ahead of
-          SegVLAD, a segment method. Both sit far above the chance floor.</figcaption>
+        <figcaption>On 17-Places the two methods are close. On maze, MegaLoc (a global descriptor) is ahead of
+          SegVLAD (a segment method). Both sit well above the chance floor.</figcaption>
       </figure>
-      <p class="note">One caution carried over from the audit: a between-method gap is only meaningful when both
-        methods used the same ground-truth radius. The MegaLoc and SegVLAD maze numbers here are both at the
-        10&nbsp;m protocol; a difference in radius alone can manufacture a gap of this size.</p>
+      <p class="note">One caution I carry over from the audit: a between-method gap only means something when both
+        methods used the same ground-truth radius. The MegaLoc and SegVLAD maze numbers here are both at
+        10&nbsp;m; a difference in radius alone can manufacture a gap this size.</p>
     </div>
   </div>
 </section>
@@ -310,19 +306,20 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">Ground-truth protocols are load-bearing</h2>
     <div class="content is-size-5">
-      <p>Two independent observations show that a single recall number is not self-interpreting indoors.</p>
+      <p>Two separate things show that a single recall number does not interpret itself indoors.</p>
       <ul>
-        <li><strong>Radius sensitivity.</strong> The SegVLAD paper itself reports that Recall@1 on 17-Places
-          swings from about 67&percnt; to about 95&percnt; depending only on the frame-radius chosen for
-          positives, with SegVLAD and AnyLoc tracking each other as the radius changes. The choice of threshold,
-          not just the method, moves the headline number.</li>
+        <li><strong>Radius sensitivity.</strong> The SegVLAD paper itself reports Recall@1 on 17-Places swinging
+          from about 67&percnt; to about 95&percnt; depending only on the frame radius chosen for positives, with
+          SegVLAD and AnyLoc tracking each other as it changes. The threshold moves the headline number, not just
+          the method.</li>
         <li><strong>Chance depends on database size.</strong> The teaser figure shows that at a fixed 25&nbsp;m
           radius, a random ranker scores about 17&percnt; Recall@1 on the 689-image Baidu subset but only about
-          5&percnt; on the 5,207-image build. A wide radius on a small database inflates every method's number
-          relative to chance.</li>
+          5&percnt; on the 5,207-image build. A wide radius on a small database quietly inflates every method's
+          number relative to chance.</li>
       </ul>
-      <p>The response is a fixed practice, described below, of reading recall against a chance floor and taking
-        thresholds from the benchmark's stated protocol rather than choosing them to produce a desired result.</p>
+      <p>So I settled on one practice for the whole project: read recall against a chance floor, and take
+        thresholds from each benchmark's stated protocol instead of picking whichever one produces a flattering
+        result.</p>
     </div>
   </div>
 </section>
@@ -333,26 +330,25 @@
     <h2 class="title is-3">Anonymisation artifacts in the evaluation data</h2>
     <div class="content is-size-5">
       <p>The Maze-with-Text benchmark anonymises people by replacing them with baked-in pure-white silhouettes.
-        A connected-component detector run over all 9,845 images finds the artifact in about 23&percnt; of both
-        reference and query images (23.3&percnt; and 22.8&percnt; at the bimodal-valley threshold). Because the
-        silhouettes sit on both sides of retrieval, they are a property of the corpus rather than of any one
-        method.</p>
+        A connected-component detector over all 9,845 images finds the artifact in about 23&percnt; of both
+        reference and query images (23.3&percnt; and 22.8&percnt; at the bimodal-valley threshold). Since the
+        silhouettes sit on both sides of retrieval, they are a property of the corpus, not of any one method.</p>
       <figure class="fig">
         <img src="static/images/fig_mask_examples.png" alt="Clean versus masked maze examples.">
         <figcaption>Top: clean hallway views. Bottom: the same benchmark with people replaced by pure-white
           silhouettes. The label is the largest connected white component as a fraction of the frame.</figcaption>
       </figure>
-      <p>This connects directly to the survey's privacy gap. NYC-Indoor-VPR also uses white-pixel masking, while
-        the NAVER LABS localisation datasets instead blur the upper body of each person. Every crowded-indoor
-        dataset carries some anonymisation artifact; the form differs, and pure-white silhouettes are likely to
-        affect a segmentation-based method differently from a global descriptor, since the segmenter is handed a
-        large uninformative blob.</p>
-      <p><strong>Building a clean subset is harder than a single threshold.</strong> A cut on white-blob size
-        cannot guarantee a fully clean subset, because small distant silhouettes overlap genuinely clean bright
-        windows on the same size axis. A shape-aware and context-aware detector, followed by a visual audit of
-        the survivors, is required to assert that no artifact remains. Removing masked references also cascades
-        into the queries, since a query with no clean positive within the radius can no longer be scored, and it
-        produces a sparser database, so a fair comparison needs a size-matched random-drop control.</p>
+      <p>This is the survey's privacy gap showing up in practice. NYC-Indoor-VPR also uses white-pixel masking,
+        while the NAVER LABS localisation datasets blur the upper body of each person instead. Every
+        crowded-indoor dataset carries some anonymisation artifact; the form varies, and pure-white silhouettes
+        probably hurt a segmentation-based method more than a global descriptor, since the segmenter gets handed
+        a big uninformative blob.</p>
+      <p><strong>Building a clean subset is harder than picking a threshold.</strong> A cut on white-blob size
+        cannot guarantee a clean subset, because small distant silhouettes overlap genuinely clean bright windows
+        on the same size axis. Getting there needs a shape-aware, context-aware detector followed by a visual
+        audit of the survivors. Dropping masked references also cascades into the queries, since a query with no
+        clean positive inside the radius can no longer be scored, and it leaves a sparser database, so any fair
+        comparison needs a size-matched random-drop control.</p>
     </div>
   </div>
 </section>
@@ -362,25 +358,26 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">In progress: cross-floor ground truth on InLoc</h2>
     <div class="content is-size-5">
-      <p>MegaLoc's author states that discarding the vertical coordinate and computing positives from horizontal
-        distance alone is safe indoors, because it is rare to credit a retrieval that shares a query's horizontal
-        position but sits on a different floor. Every common indoor benchmark (Baidu, 17-Places, single-building
-        maze retrieval) is effectively single-storey, so the claim has never been testable. <strong>InLoc is
-        multi-storey</strong>, which makes it the setting where the claim becomes falsifiable.</p>
+      <p>MegaLoc's author argues that dropping the vertical coordinate and computing positives from horizontal
+        distance alone is safe indoors, because you rarely credit a retrieval that shares a query's horizontal
+        position but sits on a different floor. The trouble is that every common indoor benchmark (Baidu,
+        17-Places, single-building maze retrieval) is effectively single-storey, so the claim has never been
+        testable. <strong>InLoc is multi-storey</strong>, which makes it the place where the claim can actually
+        be falsified.</p>
       <p><strong>InLoc structure.</strong> The database has 9,972 cutouts from WUSTL RGB-D scans across five
         floors (CSE3, CSE4, CSE5, DUC1, DUC2), with verified per-floor cutout counts of 252, 2700, 2340, 1800,
-        and 2880. The 356 iPhone 7 query photographs are taken on DUC1 and DUC2 only, so the other three floors
-        act as pure confusers. Query ground-truth poses are withheld to an evaluation server, while database
-        cutout poses are recoverable from the dataset's alignment files.</p>
+        and 2880. The 356 iPhone 7 query photographs come from DUC1 and DUC2 only, so the other three floors act
+        as pure confusers. Query ground-truth poses are withheld to an evaluation server, while the database
+        cutout poses can be recovered from the dataset's alignment files.</p>
       <p><strong>The measurement.</strong> In a multi-storey building, how often does a horizontal-distance
         ground truth credit a retrieval that is physically on a different floor? Because the query poses are
-        withheld, the planned design holds out a spatially separated set of database scans as pseudo-queries,
-        which gives exact poses on both sides. A verification pass then separates genuine cross-floor visibility
-        (an atrium view) from architectural doppelgangers (an identical corridor one floor up).</p>
+        withheld, my planned design holds out a spatially separated set of database scans as pseudo-queries,
+        which gives exact poses on both sides. A verification pass then tells genuine cross-floor visibility (an
+        atrium view) apart from architectural doppelgangers (an identical corridor one floor up).</p>
       <p><strong>A candidate testbed.</strong> The NAVER LABS localisation datasets (a Hyundai department store
-        over three floors, a Gangnam metro station over two) provide dense 6-DoF ground truth for training and
-        validation queries, so query poses are available. They are a strong alternative to InLoc for this study,
-        with the caveat that they apply upper-body blur and require registration to download.</p>
+        over three floors, a Gangnam metro station over two) come with dense 6-DoF ground truth for training and
+        validation queries, so query poses are available. They are a strong alternative to InLoc here, with the
+        caveat that they blur upper bodies and need registration to download.</p>
     </div>
   </div>
 </section>
@@ -390,22 +387,21 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">Infrastructure and reproducibility</h2>
     <div class="content is-size-5">
-      <p><strong>A storage incident shaped the current status.</strong> During the full runs the Phoenix
-        <code>/scratch2</code> volume failed with I/O errors mid-process. Extracted features, PCA models, and
-        intermediate results were lost. Code, fixes, model checkpoints, the maze numbers, and the montages
-        survived on the laptop. The rough recompute cost is about 4 hours for Baidu, 13 hours for maze, and 13
-        hours for InLoc, and the re-runs are blocked on roughly 350&nbsp;GB of scratch space.</p>
-      <p><strong>Repository hardening</strong> completed along the way: removal of a headless-unsafe tkinter
-        import, atomic HDF5 writes (write to a temporary file, then rename), resumable and skippable pipeline
-        stages, an image-extension filter that fixed an InLoc extraction crash, and a working InLoc mirror
-        download.</p>
-      <p><strong>Reproducibility practices</strong> applied throughout:</p>
+      <p><strong>A storage incident set the current status.</strong> Partway through the full runs, the Phoenix
+        <code>/scratch2</code> volume failed with I/O errors mid-process, and the extracted features, PCA models,
+        and intermediate results went with it. What survived on the laptop: code, fixes, model checkpoints, the
+        maze numbers, and the montages. Rough recompute cost is about 4 hours for Baidu, 13 for maze, and 13 for
+        InLoc, and the re-runs are stuck behind roughly 350&nbsp;GB of scratch space.</p>
+      <p><strong>Repository hardening</strong> happened along the way: removing a headless-unsafe tkinter import,
+        atomic HDF5 writes (write to a temporary file, then rename), resumable and skippable pipeline stages, an
+        image-extension filter that fixed an InLoc extraction crash, and a working InLoc mirror download.</p>
+      <p>A few <strong>reproducibility habits</strong> I kept throughout:</p>
       <ul>
         <li>Every recall is reported next to a shuffled-retriever floor (10 seeds, mean).</li>
-        <li>Ground-truth parameters are taken from each benchmark's stated protocol, never tuned to reach a
-          target number.</li>
-        <li>Descriptor order is checked against filename order on every extraction, to catch the silent bug
-          where the two diverge.</li>
+        <li>Ground-truth parameters come from each benchmark's stated protocol, never tuned to reach a target
+          number.</li>
+        <li>Descriptor order is checked against filename order on every extraction, to catch the silent bug where
+          the two drift apart.</li>
       </ul>
     </div>
   </div>
@@ -437,16 +433,16 @@
     <h2 class="title is-3">Next steps</h2>
     <div class="content is-size-5">
       <ul>
-        <li>Re-run the Baidu and InLoc SegVLAD pipelines once scratch space is available.</li>
+        <li>Re-run the Baidu and InLoc SegVLAD pipelines once scratch space frees up.</li>
         <li>Re-run maze with a per-floor breakdown, a cross-floor miss count, and the full four-row sweep
           (pretrained and finetuned backbones, domain and map vocabularies).</li>
         <li>Compute InLoc recall under a pose-based ground truth at radii of 2, 5, and 10&nbsp;m.</li>
-        <li>Add NYC-Indoor-VPR, and a 17-Places radius sweep to quantify the sensitivity reported above.</li>
-        <li>Complete a genuinely clean maze subset with a shape-aware detector and a visual audit.</li>
+        <li>Add NYC-Indoor-VPR, plus a 17-Places radius sweep to quantify the sensitivity above.</li>
+        <li>Build a genuinely clean maze subset with a shape-aware detector and a visual audit.</li>
       </ul>
       <p class="note"><strong>Caveats.</strong> One configuration per completed dataset so far. The maze
-        comparison against TextInPlace is not like-for-like, since the training and backbone differ. Published
-        table numbers are transcribed from their papers for context only.</p>
+        comparison against TextInPlace is not like-for-like, since training and backbone differ. Published table
+        numbers are transcribed from their papers for context only.</p>
     </div>
   </div>
 </section>
